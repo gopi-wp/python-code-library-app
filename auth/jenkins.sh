@@ -39,3 +39,25 @@ pipeline {
                 waitForQualityGate abortPipeline: false, credentialsId: 'sonar-cred'
             }
         }
+        stage('image build') {
+            steps {
+               sh ' docker build -t authimage .
+         }
+       }
+       stage('image scan') {
+          steps {
+              sh 'trivy image authimage'
+         }
+      } 
+       stage('tag and push') {
+          steps {
+              script {
+                    withDockerRegistry(credentialsId: 'docker-cred') {
+                     sh 'docker tag authimage gopibrahmaiah/library:authimage'
+                     sh 'docker push gopibrahmaiah/library:authimage'
+                  }
+             }
+          }
+        }
+      }
+    }
