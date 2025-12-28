@@ -39,3 +39,20 @@ pipeline {
                 waitForQualityGate abortPipeline: false, credentialsId: 'sonar-cred'
             }
         }
+        stage('image build') {
+            steps {
+               sh ' docker build -t app .
+         }
+       }
+       stage('tag and push') {
+          steps {
+              script {
+                    withDockerRegistry(credentialsId: 'docker-cred') {
+                     sh 'docker tag app gopibrahmaiah/library:appimage'
+                     sh 'docker push gopibrahmaiah/library:appimage'
+                  }
+             }
+          }
+        }
+      }
+    }
