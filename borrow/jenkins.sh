@@ -39,3 +39,25 @@ pipeline {
                 waitForQualityGate abortPipeline: false, credentialsId: 'sonar-cred'
             }
         }
+        stage('image build') {
+            steps {
+               sh ' docker build -t borrowimage .
+         }
+       }
+       stage('image scan') {
+          steps {
+              sh 'trivy image borrowimage'
+         }
+      } 
+       stage('tag and push') {
+          steps {
+              script {
+                    withDockerRegistry(credentialsId: 'docker-cred') {
+                     sh 'docker tag borrowimage gopibrahmaiah/library:borrowimage'
+                     sh 'docker push gopibrahmaiah/library:borrowimage'
+                  }
+             }
+          }
+        }
+      }
+    }
