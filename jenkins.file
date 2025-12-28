@@ -41,20 +41,20 @@ pipeline {
         }
         stage('image build') {
             steps {
-               sh ' docker build -t app .
+               sh ' docker build -t dbimage .
          }
        }
        stage('image scan') {
           steps {
-              sh 'trivy image app'
+              sh 'trivy image dbimage'
          }
       } 
        stage('tag and push') {
           steps {
               script {
                     withDockerRegistry(credentialsId: 'docker-cred') {
-                     sh 'docker tag app gopibrahmaiah/library:appimage'
-                     sh 'docker push gopibrahmaiah/library:appimage'
+                     sh 'docker tag dbimage gopibrahmaiah/library:dbimage'
+                     sh 'docker push gopibrahmaiah/library:dbimage'
                   }
              }
           }
